@@ -8,6 +8,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @AllArgsConstructor
 @Getter
@@ -20,10 +21,14 @@ public class UsuarioDTO {
     private String cpf;
     @NotBlank(message = "O nome é obrigatória")
     private String nome;
-    @NotBlank(message = "A senha é obrigatória")
-    private String senha;
-    @NotBlank(message = "O genêro é obrigatória")
+    @NotBlank(message = "O genero é obrigatória")
     private String genero;
+    @Pattern(
+        regexp = "^\\(?\\d{2}\\)?\\s?9?\\d{4}-?\\d{4}$",
+        message = "Telefone inválido"
+    )
+    @NotBlank(message = "O telefone é obrigatória")
+    private String telefone;
     @NotNull(message = "A data de nascimento é obrigatória")
     private LocalDate dataNascimento;
     @NotNull(message = "O papel é obrigatória")

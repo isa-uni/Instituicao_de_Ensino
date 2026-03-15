@@ -31,10 +31,13 @@ public class Usuario {
     private String email;
     @Column(unique = true)
     private String cpf;
+    @Column(unique = true)
+    private String matricula;
 
     private String nome;
     private String senha;
     private String genero;
+    private String telefone;
     private LocalDate dataNascimento;
     @CreationTimestamp
     private LocalDate dataMatricula;

@@ -1,5 +1,6 @@
 package instituicao.ensino.model.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,34 +28,41 @@ public class UsuarioService {
 
         Usuario usuario = new Usuario();
 
-        usuario.setEmail(dto.getEmail());
-        usuario.setCpf(normalizarCpf(dto.getCpf()));
-        usuario.setNome(dto.getNome());
-        usuario.setSenha(dto.getSenha());
-        usuario.setGenero(dto.getGenero());
-        usuario.setDataNascimento(dto.getDataNascimento());
+        String cpfLimpo = dto.getCpf().replaceAll("\\D", "");
 
-        if (!validarCPF(usuario.getCpf())) {
+        if (!validarCPF(cpfLimpo)) {
             throw new RuntimeException("CPF inválido");
         }
 
-        if (usuarioRepository.existsByCpf(usuario.getCpf())) {
+        if (usuarioRepository.existsByCpf(cpfLimpo)) {
             throw new RuntimeException("Já existe um usuario com esse CPF");
         }
+
+        String ano = String.valueOf(LocalDate.now().getYear());
+        String matricula = ano + cpfLimpo.substring(cpfLimpo.length() - 4);
+        String senhaInicial = cpfLimpo.substring(cpfLimpo.length() - 4);
+
+        usuario.setEmail(dto.getEmail());
+        usuario.setCpf(cpfLimpo);
+        usuario.setNome(dto.getNome());
+        usuario.setGenero(dto.getGenero());
+        usuario.setTelefone(dto.getTelefone());
+        usuario.setMatricula(matricula);
+        usuario.setDataNascimento(dto.getDataNascimento());
 
         Papel papel = papelRepository.findById(dto.getPapelId())
                 .orElseThrow(() -> new RuntimeException("Papel não encontrado"));
 
-        try {
-            usuario.setPapel(papel);
-            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        usuario.setPapel(papel);
+        usuario.setSenha(passwordEncoder.encode(senhaInicial));
 
+        try {
             return usuarioRepository.save(usuario);
 
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("usuario já cadastrado");
         }
-}
+    }
 
     public void deletarUsuario(Long id){
         Usuario usuario = usuarioRepository.findById(id)
