@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +31,7 @@ public class FilterChain {
         return http
                 .cors(cors -> {})
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorization -> {
                     authorization.requestMatchers(HttpMethod.POST,"/login").permitAll();
@@ -40,8 +41,10 @@ public class FilterChain {
                     // authorization.requestMatchers(HttpMethod.POST,"/papel/novo").hasRole("admin");
                     authorization.requestMatchers(HttpMethod.DELETE,"/usuarios/deletar/**").permitAll();
                     authorization.requestMatchers("/h2-console/**").permitAll();
-                    authorization.requestMatchers(HttpMethod.POST, "/turma/novo").hasRole("professor");
-                    authorization.requestMatchers(HttpMethod.POST, "/nota/novo").hasRole("professor");
+                    authorization.requestMatchers("/turmas/**").permitAll();
+                    authorization.requestMatchers("/usuario-turma/**").permitAll();
+//                    authorization.requestMatchers(HttpMethod.POST, "/turma/novo").hasRole("professor");
+//                    authorization.requestMatchers(HttpMethod.POST, "/nota/novo").hasRole("professor");
                     authorization.anyRequest().authenticated();
                 })
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
@@ -68,7 +71,7 @@ public class FilterChain {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

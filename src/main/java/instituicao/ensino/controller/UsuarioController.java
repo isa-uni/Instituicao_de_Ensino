@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import instituicao.ensino.model.dto.UsuarioDTO;
+import instituicao.ensino.model.dto.UsuarioTurmaResponse;
 import instituicao.ensino.model.entity.Usuario;
 import instituicao.ensino.model.service.UsuarioService;
+import instituicao.ensino.model.service.UsuarioTurmaService;
 import instituicao.ensino.util.DefaultResponse;
 import jakarta.validation.Valid;
 
@@ -24,6 +26,9 @@ import jakarta.validation.Valid;
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private UsuarioTurmaService usuarioTurmaService;
 
     @PostMapping("/cadastrar")
     public ResponseEntity<?> cadastrarCliente(@RequestBody @Valid UsuarioDTO dto) {
@@ -57,5 +62,11 @@ public class UsuarioController {
     public ResponseEntity<List<Usuario>> getUsuarios() {
         List<Usuario> usuario = usuarioService.ConsultarUsuarios();
         return ResponseEntity.ok(usuario);
+    }
+
+    @GetMapping("/{id}/turmas")
+    public ResponseEntity<List<UsuarioTurmaResponse>> listarTurmas(@PathVariable Long id) {
+        List<UsuarioTurmaResponse> turmas = usuarioTurmaService.findByUsuarioId(id);
+        return ResponseEntity.ok(turmas);
     }
 }
