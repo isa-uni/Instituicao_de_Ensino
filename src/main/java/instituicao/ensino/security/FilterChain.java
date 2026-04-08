@@ -39,12 +39,10 @@ public class FilterChain {
                     // authorization.requestMatchers(HttpMethod.POST,"/usuarios/cadastrar").hasRole("admin");
                     authorization.requestMatchers(HttpMethod.POST,"/papel/novo").permitAll();
                     // authorization.requestMatchers(HttpMethod.POST,"/papel/novo").hasRole("admin");
-                    authorization.requestMatchers(HttpMethod.DELETE,"/usuarios/deletar/**").permitAll();
+                    authorization.requestMatchers(HttpMethod.DELETE,"/usuarios/deletar/**").hasRole("admin");
                     authorization.requestMatchers("/h2-console/**").permitAll();
-                    authorization.requestMatchers("/turmas/**").permitAll();
-                    authorization.requestMatchers("/usuario-turma/**").permitAll();
-//                    authorization.requestMatchers(HttpMethod.POST, "/turma/novo").hasRole("professor");
-//                    authorization.requestMatchers(HttpMethod.POST, "/nota/novo").hasRole("professor");
+                    authorization.requestMatchers("/turmas/**").hasAnyRole("admin", "professor");
+                    authorization.requestMatchers("/usuario-turma/**").hasAnyRole("admin", "professor");
                     authorization.anyRequest().authenticated();
                 })
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

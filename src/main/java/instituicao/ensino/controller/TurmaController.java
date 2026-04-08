@@ -66,13 +66,12 @@ public class TurmaController {
 //        return ResponseEntity.created(location).body(saved);
 //    }
 //
-//    // deleta uma turma
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> delete(@PathVariable Long id)  {
-//        turmaService.delete(id);
-//        return ResponseEntity.noContent().build();
-//
-//    }
+    // deleta uma turma
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) throws Exception {
+        turmaService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }
 

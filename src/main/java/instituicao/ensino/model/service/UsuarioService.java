@@ -13,6 +13,7 @@ import instituicao.ensino.model.entity.Papel;
 import instituicao.ensino.model.entity.Usuario;
 import instituicao.ensino.model.repository.PapelRepository;
 import instituicao.ensino.model.repository.UsuarioRepository;
+import instituicao.ensino.model.repository.UsuarioTurmaRepository;
 
 @Service
 public class UsuarioService {
@@ -23,6 +24,8 @@ public class UsuarioService {
     private PapelRepository papelRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UsuarioTurmaRepository usuarioTurmaRepository;
 
     public Usuario cadastrarUsuario(UsuarioDTO dto) {
 
@@ -69,6 +72,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException(
                         "Cliente com id " + id + " não encontrado"
                 ));
+        usuarioTurmaRepository.deleteAll(usuarioTurmaRepository.findByUsuarioId(id));
         usuarioRepository.delete(usuario);
     }
     

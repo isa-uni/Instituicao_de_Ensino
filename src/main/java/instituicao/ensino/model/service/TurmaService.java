@@ -3,6 +3,7 @@ package instituicao.ensino.model.service;
 import instituicao.ensino.model.dto.TurmaDTO;
 import instituicao.ensino.model.entity.Turma;
 import instituicao.ensino.model.repository.TurmaRepository;
+import instituicao.ensino.model.repository.UsuarioTurmaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import java.util.Optional;
 public class TurmaService {
     @Autowired
     private TurmaRepository turmaRepository;
+
+    @Autowired
+    private UsuarioTurmaRepository usuarioTurmaRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -41,6 +45,14 @@ public class TurmaService {
         Optional<Turma> optionalEntity = turmaRepository.findById(turma.getId());
         optionalEntity.ifPresent(entity -> entityManager.refresh(entity));
         return optionalEntity.orElseThrow(() -> new Exception("turma com id " + turma.getId() + " não encontrada"));
+    }
+
+    @Transactional
+    public void delete(Long id) throws Exception {
+        Turma turma = turmaRepository.findById(id)
+                .orElseThrow(() -> new Exception("Turma com id " + id + " não encontrada"));
+        usuarioTurmaRepository.deleteAll(usuarioTurmaRepository.findByTurmaId(id));
+        turmaRepository.delete(turma);
     }
 
 }
